@@ -28,16 +28,14 @@ jobs:
           echo '{"telemetry.enableTelemetry": false,"telemetry.enableCrashReporter": false,"remote.extensionKind": {"ms-vscode-remote.remote-ssh": true}}' > $HOME/.vscode-remote/data/Machine/settings.json
           code --install-extension formulahendry.code-runner
 
-      - name: Install ngrok
+      - name: Install ngrok and set token
         run: |
+          mkdir -p $HOME/.ngrok2/
+          echo "authtoken: 2Q62sciZHvRunnnnVbZwLWJkND3_KJpgXdqYuzmMRnDf9VEt" > $HOME/.ngrok2/ngrok.yml
           wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
           unzip ngrok-stable-linux-amd64.zip
           sudo mv ngrok /usr/local/bin/ngrok
           ngrok --version
-
-      - name: Set ngrok token
-        run: |
-          echo "authtoken: 2Q62sciZHvRunnnnVbZwLWJkND3_KJpgXdqYuzmMRnDf9VEt" > ~/.ngrok2/ngrok.yml
 
       - name: Start ngrok tunnel
         run: ngrok http 8080
