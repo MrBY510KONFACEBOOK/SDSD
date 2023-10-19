@@ -38,14 +38,16 @@ jobs:
           ngrok --version
 
       - name: Start ngrok tunnel
-        run: ngrok http 8080
-        background: true
-
-      - name: Display ngrok URL
         run: |
-          sleep 5  # wait for ngrok to start
+          nohup ngrok http 8080 > ngrok.log 2>&1 &
+          sleep 1  # wait for ngrok to start
           ngrok_url=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
           echo "Ngrok URL: $ngrok_url"
+
+      - name: Run your web service
+        run: |
+          # Replace the following command with your actual web service command
+          python -m http.server 8080 --bind 127.0.0.1
 
       - name: Open VS Code in ngrok tunnel
         run: |
