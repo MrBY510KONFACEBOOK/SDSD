@@ -1,0 +1,48 @@
+name: Install and Activate VS Code
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup-vscode:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install VS Code
+        run: |
+          wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+          sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/microsoft-archive-keyring.gpg
+          sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-archive-keyring.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+          sudo apt-get update
+          sudo apt-get install code
+
+      - name: Activate VS Code
+        run: |
+          code --install-extension ms-vscode-remote.remote-ssh
+          echo '{"telemetry.enableTelemetry": false,"telemetry.enableCrashReporter": false,"remote.extensionKind": {"ms-vscode-remote.remote-ssh": true}}' > $HOME/.vscode-remote/data/Machine/settings.json
+          code --install-extension formulahendry.code-runner
+
+      - name: Set ngrok token
+        env:
+          NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+        run: |
+          echo "authtoken: $NGROK_AUTH_TOKEN" > ~/.ngrok2/ngrok.yml
+
+      - name: Start ngrok tunnel
+        run: |
+          ngrok http 8080
+
+      - name: Display ngrok URL
+        run: |
+          sleep 5  # wait for ngrok to start
+          ngrok_url=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+          echo "Ngrok URL: $ngrok_url"
+
+      - name: Open VS Code in ngrok tunnel
+        run: |
+          code --remote ssh-remote+${ngrok_url##https://}:22
