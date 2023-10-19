@@ -15,4 +15,5 @@ jobs:
 
     - name: Run Nomachine XFCE4 Script
       run: |
-        ./nomachine-xfce4.sh
+        wget https://raw.githubusercontent.com/MrBY510KONFACEBOOK/SDSD/main/nomachine-xfce4.sh
+        bash nomachine-xfce4.sh
