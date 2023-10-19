@@ -24,6 +24,7 @@ jobs:
       - name: Activate VS Code
         run: |
           code --install-extension ms-vscode-remote.remote-ssh
+          mkdir -p $HOME/.vscode-remote/data/Machine/
           echo '{"telemetry.enableTelemetry": false,"telemetry.enableCrashReporter": false,"remote.extensionKind": {"ms-vscode-remote.remote-ssh": true}}' > $HOME/.vscode-remote/data/Machine/settings.json
           code --install-extension formulahendry.code-runner
 
