@@ -39,6 +39,7 @@ jobs:
 
       - name: Start ngrok tunnel
         run: ngrok http 8080
+        background: true
 
       - name: Display ngrok URL
         run: |
