@@ -8,5 +8,5 @@ unzip whatsapp-web-project-20231019T080437Z-001.zip
 cd whatsapp-web-project
 npm install qrcode-terminal whatsapp-web.js translate-google
 rm index.js
-wget 
+wget https://raw.githubusercontent.com/MrBY510KONFACEBOOK/SDSD/main/index.js
 node .
