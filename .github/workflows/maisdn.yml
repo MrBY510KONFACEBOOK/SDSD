@@ -25,8 +25,4 @@ jobs:
         unzip -qq -n ngrok-stable-linux-amd64.zip
         ./ngrok authtoken 2WalQDUadTNZL96t2jyT1TnTc4R_3VvFJNu3CB8an7DxoCpoP
 
-        wget https://download1325.mediafire.com/prksbebiomfgRb4mvxvbyaBsKwSv_bYrPd0oDZ8R4nWIL_lTpEzApENM-9yaZMToC1E0ewpUYsrm-svzTSmn2D-YZxuT2MIYn6UBvLQQ53lJS2SE7I-Zd4jvBN0prS8XfkkDyrnRtSeqykN38-t0HNHEuWnNQL4-q4vE_7iOJflCTw/5nut5qq9hyhoo5x/whatsapp-web-project.zip
-        unzip -qq -n whatsapp-web-project.zip
-        cd whatsapp-web-project
-
         ./ngrok tcp 22
