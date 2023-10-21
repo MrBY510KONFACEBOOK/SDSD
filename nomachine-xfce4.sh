@@ -1,44 +1,49 @@
-wget -O ng.sh https://github.com/kmille36/Docker-Ubuntu-Desktop-NoMachine/raw/main/ngrok.sh > /dev/null 2>&1
-chmod +x ng.sh
-./ng.sh
+#!/bin/bash
 
-echo "Go to: https://dashboard.ngrok.com/get-started/your-authtoken"
-./ngrok authtoken 2Q62sciZHvRunnnnVbZwLWJkND3_KJpgXdqYuzmMRnDf9VEt 
+# Check if CRP argument is provided
+if [ -z "$1" ]; then
+  echo "Usage: $0 <CRP>"
+  exit 1
+fi
 
-echo "Repo: https://github.com/kmille36/Docker-Ubuntu-Desktop-NoMachine"
-echo "======================="
-echo "choose ngrok region (for better connection)."
-echo "======================="
-echo "us - United States (Ohio)"
-echo "eu - Europe (Frankfurt)"
-echo "ap - Asia/Pacific (Singapore)"
-echo "au - Australia (Sydney)"
-echo "sa - South America (Sao Paulo)"
-echo "jp - Japan (Tokyo)"
-echo "in - India (Mumbai)"
-./ngrok tcp --region us 4000 &>/dev/null &
-sleep 1
-if curl --silent --show-error http://127.0.0.1:4040/api/tunnels > /dev/null 2>&1; then echo OK; else echo "Ngrok Error! Please try again!"; fi
+CRP="$1"  # Use the CRP provided as the first argument
+Pin=123456  # Set the PIN to a constant value
 
-docker run --rm -d --network host --privileged --name nomachine-xfce4 -e PASSWORD=123456 -e USER=user --cap-add=SYS_PTRACE --shm-size=1g thuonghai2711/nomachine-ubuntu-desktop:xfce4
+# Create a new user 'abdellah' with password '123456'
+sudo useradd -m -p $(openssl passwd -1 123456) abdellah
+sudo usermod -aG sudo abdellah
 
-echo "NoMachine: https://www.nomachine.com/download"
-echo Done! NoMachine Information:
-echo IP Address:
-curl --silent --show-error http://127.0.0.1:4040/api/tunnels | sed -nE 's/.*public_url":"tcp:..([^"]*).*/\1/p' 
-echo User: user
-echo Passwd: 123456
-echo "VM can't connect? Restart Cloud Shell then Re-run script."
+# Install OpenSSH server
+sudo apt-get install -y openssh-server
 
-seq 1 43200 | while read i; do
-    echo -en "\r Running .     $i s /43200 s"; sleep 0.1;
-    echo -en "\r Running ..    $i s /43200 s"; sleep 0.1;
-    echo -en "\r Running ...   $i s /43200 s"; sleep 0.1;
-    echo -en "\r Running ....  $i s /43200 s"; sleep 0.1;
-    echo -en "\r Running ..... $i s /43200 s"; sleep 0.1;
-    echo -en "\r Running     . $i s /43200 s"; sleep 0.1;
-    echo -en "\r Running  .... $i s /43200 s"; sleep 0.1;
-    echo -en "\r Running   ... $i s /43200 s"; sleep 0.1;
-    echo -en "\r Running    .. $i s /43200 s"; sleep 0.1;
-    echo -en "\r Running     . $i s /43200 s"; sleep 0.1;
-done
+# Allow password authentication in SSH
+sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sudo service ssh restart
+
+# Install Chrome Remote Desktop
+sudo apt update
+sudo wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
+sudo dpkg --install chrome-remote-desktop_current_amd64.deb
+sudo apt install --assume-yes --fix-broken
+
+# Install Desktop Environment (XFCE)
+sudo apt install --assume-yes xfce4 desktop-base xfce4-terminal
+sudo bash -c 'echo "exec /etc/X11/Xsession /usr/bin/xfce4-session" > /etc/chrome-remote-desktop-session'
+sudo apt remove --assume-yes gnome-terminal
+sudo apt install --assume-yes xscreensaver
+sudo systemctl disable lightdm.service
+
+# Install Google Chrome
+sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg --install google-chrome-stable_current_amd64.deb
+sudo apt install --assume-yes --fix-broken
+
+# Set up Chrome Remote Desktop for the user 'abdellah'
+sudo adduser abdellah chrome-remote-desktop
+sudo systemctl unmask chrome-remote-desktop.service
+sudo systemctl enable chrome-remote-desktop.service
+
+# Start Chrome Remote Desktop host with provided DISPLAY command and constant PIN
+sudo su - abdellah -c "$DISPLAY /opt/google/chrome-remote-desktop/start-host --code=\"$CRP\" --redirect-url=\"https://remotedesktop.google.com/_/oauthredirect\" --name=$(hostname) --pin=${Pin}"
+
+echo "User 'abdellah' created with password '123456', sudo privileges, and Chrome Remote Desktop set up with CRP: $CRP and PIN: $Pin."
