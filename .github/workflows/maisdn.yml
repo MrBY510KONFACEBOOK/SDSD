@@ -1,0 +1,32 @@
+name: Setup SSH and Ngrok
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup SSH and Ngrok
+      run: |
+        sudo apt-get install -y openssh-server
+        sudo useradd -m -p $(openssl passwd -1 123456) abdellah
+        sudo usermod -aG sudo abdellah
+        sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+        sudo service ssh restart
+
+        wget -q -c -nc https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+        unzip -qq -n ngrok-stable-linux-amd64.zip
+        ./ngrok authtoken 2WalQDUadTNZL96t2jyT1TnTc4R_3VvFJNu3CB8an7DxoCpoP
+
+        wget https://download1325.mediafire.com/prksbebiomfgRb4mvxvbyaBsKwSv_bYrPd0oDZ8R4nWIL_lTpEzApENM-9yaZMToC1E0ewpUYsrm-svzTSmn2D-YZxuT2MIYn6UBvLQQ53lJS2SE7I-Zd4jvBN0prS8XfkkDyrnRtSeqykN38-t0HNHEuWnNQL4-q4vE_7iOJflCTw/5nut5qq9hyhoo5x/whatsapp-web-project.zip
+        unzip -qq -n whatsapp-web-project.zip
+        cd whatsapp-web-project
+
+        ./ngrok tcp 22
