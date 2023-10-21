@@ -19,7 +19,7 @@ sudo wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
 sudo unzip ngrok-stable-linux-amd64.zip -d /usr/local/bin
 
 # Set up ngrok tunnel for SSH
-ngrok authtoken 
+ngrok authtoken 2WalQDUadTNZL96t2jyT1TnTc4R_3VvFJNu3CB8an7DxoCpoP
 ngrok tcp 22
 
 # Display ngrok SSH tunnel information
