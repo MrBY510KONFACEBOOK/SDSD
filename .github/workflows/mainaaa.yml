@@ -9,19 +9,19 @@ jobs:
   setup:
     runs-on: ubuntu-latest
 
+    env:
+      CRP: ${{ secrets.CRP }}
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
     - name: Setup User and RDP
       run: |
-        username="user"
-        password="123456"
-        
         # Creating User and Setting it up
-        useradd -m $username
-        adduser $username sudo
-        echo "$username:$password" | sudo chpasswd
+        useradd -m user
+        adduser user sudo
+        echo 'user:123456' | sudo chpasswd
         sed -i 's/\/bin\/sh/\/bin\/bash/g' /etc/passwd
 
         # Setting up RDP
@@ -41,16 +41,12 @@ jobs:
         apt install --assume-yes --fix-broken
 
         if [ -n "$CRP" ]; then
-          adduser $username chrome-remote-desktop
-          command="DISPLAY= /opt/google/chrome-remote-desktop/start-host --code=\"$CRP\" --redirect-url=\"https://remotedesktop.google.com/_/oauthredirect\" --name=$(hostname) --pin=$Pin"
-          su - $username -c "$command"
+          adduser user chrome-remote-desktop
+          command="DISPLAY= /opt/google/chrome-remote-desktop/start-host --code=\"$CRP\" --redirect-url=\"https://remotedesktop.google.com/_/oauthredirect\" --name=$(hostname) --pin=123456"
+          su - user -c "$command"
           service chrome-remote-desktop start
         else
           echo "Please enter authcode from the given link"
         fi
 
         echo "Finished Setup"
-
-      env:
-        CRP: ${{ secrets.CRP }}
-        Pin: 123456
