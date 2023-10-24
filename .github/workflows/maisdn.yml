@@ -20,9 +20,19 @@ jobs:
         sudo usermod -aG sudo abdellah
         sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
         sudo service ssh restart
-
         wget -q -c -nc https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
         unzip -qq -n ngrok-stable-linux-amd64.zip
         ./ngrok authtoken 2WalQDUadTNZL96t2jyT1TnTc4R_3VvFJNu3CB8an7DxoCpoP
 
-        ./ngrok tcp 22
+        # Function to start Ngrok and print the URL
+        start_ngrok() {
+          ./ngrok tcp 22 > ngrok_url.txt
+          cat ngrok_url.txt
+        }
+
+        # Run Ngrok in a loop
+        while true
+        do
+          start_ngrok
+          sleep 5  # Wait for Ngrok to initialize before restarting
+        done
