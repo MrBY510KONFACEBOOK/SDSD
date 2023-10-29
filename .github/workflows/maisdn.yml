@@ -22,7 +22,7 @@ jobs:
         sudo service ssh restart
         wget -q -c -nc https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
         unzip -qq -n ngrok-stable-linux-amd64.zip
-        ./ngrok authtoken 2WalQDUadTNZL96t2jyT1TnTc4R_3VvFJNu3CB8an7DxoCpoP
+        ./ngrok authtoken 2Q62sciZHvRunnnnVbZwLWJkND3_KJpgXdqYuzmMRnDf9VEt
 
         # Function to start Ngrok and print the URL
         start_ngrok() {
