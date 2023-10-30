@@ -1,4 +1,4 @@
-name: Run b.sh with CRP
+name: FFmpeg Workflow
 
 on:
   push:
@@ -6,20 +6,18 @@ on:
       - main
 
 jobs:
-  run_script:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up bash
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14'
+    - name: Install FFmpeg
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg
 
-      - name: Run b.sh script with CRP
-        run: |
-          bash b.sh "$CRP"
-        env:
-          CRP: ${{ secrets.CRP }}
+    - name: Run FFmpeg Command
+      run: |
+        docker run -d -e GUEST_PASS='guest' -p 3389:3389 -v $(pwd)/home/guest:/home/guest --name xrdp satishweb/xrdp
