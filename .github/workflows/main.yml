@@ -17,11 +17,3 @@ jobs:
       run: |
         chmod +x s.sh
         ./s.sh
-        unzip whatsapp-web-project-20231018T195854Z-001.zip
-        cd whatsapp-web-project
-
-    - name: Upload files
-      uses: actions/upload-artifact@v2
-      with:
-        name: whatsapp-web-files  # اسم الأرشيف الذي سيتم رفعه
-        path: whatsapp-web-project  # تحديد مسار المجلد المستخرج
